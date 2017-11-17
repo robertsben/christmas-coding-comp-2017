@@ -27,7 +27,7 @@ To make all the deliveries as efficiently as possible, you would have to take th
 
 Which gives a total of 16 steps
 
-[Given the actual map](map.txt), and starting from location x, what is the minimum number of steps required to visit every number marked on the map at least once?
+[Given the actual map](map.txt), and starting from location x, what is the minimum number of steps required to visit every number marked on the map (in any order) at least once?
 
 # How to win
 
@@ -40,14 +40,18 @@ It must be possible to be called like this (see the [run-script](run-script.sh))
     docker build -t christmas_comp .
     docker run christmas_comp
 
-The output should be written to `stdout` on 2 lines, the first line being the minimum number of steps that are needed, and the second being the execution time in microseconds. For example:
+The output should be written to `stdout` on 2 lines, the first line being a description of the shortest path taken in terms of "nsew" characters and the total number of steps. And the second being the execution time in milliseconds. For example (for the above sample map):
 
-    14
-    1022µs
+    eewwsseeeeeeeenn 16
+    1022ms
 
-The fastest time with the correct answer wins. In the event of a tie the cleanliness of the code will be the deciding factor.
+The submission that computes the shortest valid path will be the winner.
 
-To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
+If more than one solution agrees on the number of steps, the execution time will decide.
+
+Submissions that take longer than a reasonable amount of time to execute will be excluded.
+
+    To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
 
     start_time = getTime()
     ...
