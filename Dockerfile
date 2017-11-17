@@ -1,6 +1,13 @@
 # Example Dockerfile, edit to your requirements
-FROM alpine
+FROM golang:1-alpine
 
-COPY src /
+WORKDIR /go/src/app
 
-CMD ["/hello"]
+COPY src .
+
+RUN go-wrapper download
+
+RUN go-wrapper install
+
+CMD ["go-wrapper", "run"]
+

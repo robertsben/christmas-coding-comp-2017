@@ -1,4 +1,0 @@
-#!/bin/sh
-
-echo 12
-echo 100µs
