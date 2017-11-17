@@ -51,7 +51,7 @@ If more than one solution agrees on the number of steps, the execution time will
 
 Submissions that take longer than a reasonable amount of time to execute will be excluded.
 
-    To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
+To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
 
     start_time = getTime()
     ...
