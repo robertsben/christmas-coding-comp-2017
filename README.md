@@ -57,4 +57,4 @@ To make it fair accross languages with a slower startup time (JVM for example), 
 
 # The prize
 
-TBC
+💰 £50 Amazon voucher for the winning entry 💰
