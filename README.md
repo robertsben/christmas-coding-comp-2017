@@ -23,7 +23,7 @@ To make all the deliveries as efficiently as possible, you would have to take th
 - x to 0 (2 steps)
 - 0 to 3 (4 steps; diagonal moves are not allowed)
 - 3 to 2 (8 steps)
-- 2 to 3 (2 steps)
+- 2 to 1 (2 steps)
 
 Which gives a total of 16 steps
 
