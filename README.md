@@ -35,7 +35,7 @@ Submission should be in the form of a merge request into `master` of this repo f
 
 Your fork should contain a simple Dockerfile containing all the required build steps and an appropriate CMD instruction (see the example [Dockerfile](Dockerfile)).
 
-It must be possible to be called like this (see the `run-script` in `master`):
+It must be possible to be called like this (see the [run-script](run-script.sh)):
 
     docker build -t christmas_comp .
     docker run christmas_comp
@@ -46,8 +46,6 @@ The output should be written to `stdout` on 2 lines, the first line being the mi
     1022µs
 
 The fastest time with the correct answer wins. In the event of a tie the cleanliness of the code will be the deciding factor.
-
-Submissions can be made by linking to a git repo or a zip file and you should state an expected execution time.
 
 To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
 
