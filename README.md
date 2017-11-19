@@ -20,12 +20,12 @@ For example, suppose you have a map like the following (simplified to 4 employee
 
 To make all the deliveries as efficiently as possible, you would have to take the following path:
 
-- x to 0 (2 steps)
-- 0 to 3 (4 steps; diagonal moves are not allowed)
-- 3 to 2 (8 steps)
-- 2 to 1 (2 steps)
+- x to 3 (2 steps)
+- 3 to 0 (4 steps; diagonal moves are not allowed)
+- 0 to 1 (6 steps)
+- 1 to 2 (2 steps)
 
-Which gives a total of 16 steps
+Which gives a total of 14 steps
 
 [Given the actual map](map.txt), and starting from location x, what is the minimum number of steps required to visit every number marked on the map (in any order) at least once?
 
