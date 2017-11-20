@@ -1,6 +1,6 @@
 # Christmas Coding Challenge 2017
 
-Deadline for submissions - 15/12/17
+*Deadline for submissions - 15/12/17*
 
 # The Challenge
 
@@ -20,25 +20,27 @@ For example, suppose you have a map like the following (simplified to 4 employee
 
 To make all the deliveries as efficiently as possible, you would have to take the following path:
 
-- x to 0 (2 steps)
-- 0 to 3 (4 steps; diagonal moves are not allowed)
-- 3 to 2 (8 steps)
-- 2 to 1 (2 steps)
+- x to 3 (2 steps)
+- 3 to 0 (4 steps; diagonal moves are not allowed)
+- 0 to 1 (6 steps)
+- 1 to 2 (2 steps)
 
-Which gives a total of 16 steps
+Which gives a total of 14 steps
 
 [Given the actual map](map.txt), and starting from location x, what is the minimum number of steps required to visit every number marked on the map (in any order) at least once?
 
 # How to win
 
-Submission should be in the form of a merge request into `master` of this repo from your own _private_ fork. With it being a private fork you'll need to explicitly grant me access.
+Fork this repo into your own namespace and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
 
 Your fork should contain a simple Dockerfile containing all the required build steps and an appropriate CMD instruction (see the example [Dockerfile](Dockerfile)).
 
 It must be possible to be called like this (see the [run-script](run-script.sh)):
 
     docker build -t christmas_comp .
-    docker run christmas_comp
+    docker run --memory=1G christmas_comp
+
+(note the `1G` memory limit on the `conatiner run`)
 
 The output should be written to `stdout` on 2 lines, the first line being a description of the shortest path taken in terms of "nsew" characters and the total number of steps. And the second being the execution time in milliseconds. For example (for the above sample map):
 
