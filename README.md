@@ -1,6 +1,6 @@
 # Christmas Coding Challenge 2017
 
-Deadline for submissions - 15/12/17
+*Deadline for submissions - 15/12/17*
 
 # The Challenge
 
@@ -31,7 +31,7 @@ Which gives a total of 14 steps
 
 # How to win
 
-Submission should be in the form of a merge request into `master` of this repo from your own _private_ fork. With it being a private fork you'll need to explicitly grant me access.
+Fork this repo into your own namespace and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
 
 Your fork should contain a simple Dockerfile containing all the required build steps and an appropriate CMD instruction (see the example [Dockerfile](Dockerfile)).
 
