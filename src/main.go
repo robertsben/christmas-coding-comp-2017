@@ -25,10 +25,10 @@ func main() {
 	currentMax := 0
 	var desk int
 
-	for i := 1; currentMax < target; i++ {
+	for i := 0; currentMax < target; i+=12 {
 		presentsForDesk := calculatePresents(i)
-		fmt.Printf("%v: %v\n", i, presentsForDesk)
 		if presentsForDesk > currentMax {
+			fmt.Printf("%v: %v\n", i, presentsForDesk)
 			currentMax = presentsForDesk
 			desk = i
 		}
