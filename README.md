@@ -4,30 +4,33 @@
 
 # The Challenge
 
-By random draw you have been selected to be Santa's helper this year, your job is to deliver presents to 10 lucky Sky employees scattered over Leeds Dock.
+Leeds Dock has had a super productive year with many big wins, to reward the staff Renee has comissioned Santa's Elves to deliver gifts by hand to each desk.
 
-Use your skills to find the most efficient way of delivering all the presents by making as few steps as possible.
+For the sake of this exercise assume there are an infinite number of employees at Leeds Dock who sit at desks numbered sequentially: 1, 2, 3, 4, 5, and so on.
 
-You are given a seating layout in the form of an ascii file, it details the locations and distances between each employee. `x` is your current location, from where you start; the other numbers are (in no particular order) the deliveries you need to make. Walls are marked as #, and open passages are marked as `.`. Numbers behave like open passages.
+Each Elf is assigned a number, too, and delivers presents to desks based on that number:
 
-For example, suppose you have a map like the following (simplified to 4 employees):
+- The first Elf (number 1) delivers presents to every desk: 1, 2, 3, 4, 5, ....
+- The second Elf (number 2) delivers presents to every second desk: 2, 4, 6, 8, 10, ....
+- Elf number 3 delivers presents to every third desk: 3, 6, 9, 12, 15, ....
 
-    ###########
-    #x.0.....1#
-    #.#######.#
-    #3.......2#
-    ###########
+There are infinitely many Elves, numbered starting with 1. Each Elf delivers presents equal to ten times his or her number at the desks they make deliveries to.
 
-To make all the deliveries as efficiently as possible, you would have to take the following path:
+So, the first nine desks end up like this:
 
-- x to 3 (2 steps)
-- 3 to 0 (4 steps; diagonal moves are not allowed)
-- 0 to 1 (6 steps)
-- 1 to 2 (2 steps)
+    Desk 1 got 10 presents.
+    Desk 2 got 30 presents.
+    Desk 3 got 40 presents.
+    Desk 4 got 70 presents.
+    Desk 5 got 60 presents.
+    Desk 6 got 120 presents.
+    Desk 7 got 80 presents.
+    Desk 8 got 150 presents.
+    Desk 9 got 130 presents.
 
-Which gives a total of 14 steps
+The first desk gets 10 presents: it is visited only by Elf 1, which delivers 1 * 10 = 10 presents. The fourth desk gets 70 presents, because it is visited by Elves 1, 2, and 4, for a total of 10 + 20 + 40 = 70 presents.
 
-[Given the actual map](map.txt), and starting from location x, what is the minimum number of steps required to visit every number marked on the map (in any order) at least once?
+What is the lowest desk number of the desk to get at least 50000000 presents?
 
 # How to win
 
@@ -42,16 +45,10 @@ It must be possible to be called like this (see the [run-script](run-script.sh))
 
 (note the `1G` memory limit on the `conatiner run`)
 
-The output should be written to `stdout` on 2 lines, the first line being a description of the shortest path taken in terms of "nsew" characters and the total number of steps. And the second being the execution time in milliseconds. For example (for the above sample map):
+The output should be written to `stdout` on 2 lines, the first line being the desk number. And the second being the time taken to work it out in microseconds:
 
-    eewwsseeeeeeeenn 16
-    1022ms
-
-The submission that computes the shortest valid path will be the winner.
-
-If more than one solution agrees on the number of steps, the execution time will decide.
-
-Submissions that take longer than a reasonable amount of time to execute will be excluded.
+    123456
+    1022μs
 
 To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
 
@@ -60,6 +57,8 @@ To make it fair accross languages with a slower startup time (JVM for example), 
     // compute result
     ...
     execution_time = getTime() - start_time
+
+The winning entry will be the fastest solution to deliver the correct answer.
 
 # The prize
 
