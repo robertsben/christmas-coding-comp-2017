@@ -43,7 +43,7 @@ It must be possible to be called like this (see the [run-script](run-script.sh))
     docker build -t christmas_comp .
     docker run --memory=1G christmas_comp
 
-(note the `1G` memory limit on the `conatiner run`)
+(note the `1G` memory limit on the `run`)
 
 The output should be written to `stdout` on 2 lines, the first line being the desk number. And the second being the time taken to work it out in microseconds:
 
