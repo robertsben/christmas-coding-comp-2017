@@ -50,7 +50,7 @@ The output should be written to `stdout` on 2 lines, the first line being the de
     123456
     1022μs
 
-To make it fair accross languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
+To make it fair across languages with a slower startup time (JVM for example), you should measure the execution time within your code. For example in pseudocode:
 
     start_time = getTime()
     ...
