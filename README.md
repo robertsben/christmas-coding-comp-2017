@@ -34,7 +34,7 @@ What is the lowest desk number of the desk to get at least 50000000 presents?
 
 # How to win
 
-Fork this repo into your own namespace and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
+Fork this repo into your own namespace, *make it private*, and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
 
 Your fork should contain a simple Dockerfile containing all the required build steps and an appropriate CMD instruction (see the example [Dockerfile](Dockerfile)).
 
