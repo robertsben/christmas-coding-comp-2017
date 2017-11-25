@@ -5,6 +5,7 @@ import (
 	"time"
 	"os"
 	"strconv"
+	"math"
 )
 
 func calculatePresents(desk uint32) uint32 {
@@ -22,19 +23,21 @@ func calculatePresents(desk uint32) uint32 {
 
 func main() {
 	var desk, target, currentMax, presentsForDesk, i uint32
+	var deskIsMoreThanSqrtOfPresents bool
 	var start time.Time
 	var duration time.Duration
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
 	target = uint32(parsedTarget)
 	currentMax = 0
-
 	start = time.Now()
 
-	for i = 0; currentMax < target; i+=12 {
+	fmt.Printf("%v!\n", target)
+	for i = 1; currentMax < target; i+=1 {
 		presentsForDesk = calculatePresents(i)
+		deskIsMoreThanSqrtOfPresents = i >= uint32(math.Sqrt(float64(presentsForDesk)))
+		fmt.Printf("%v: %v: %v\n", i, presentsForDesk, deskIsMoreThanSqrtOfPresents)
 		if presentsForDesk > currentMax {
-			fmt.Printf("%v: %v\n", i, presentsForDesk)
 			currentMax = presentsForDesk
 			desk = i
 		}
