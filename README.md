@@ -34,14 +34,14 @@ What is the lowest desk number of the desk to get at least 50000000 presents?
 
 # How to win
 
-Fork this repo into your own namespace and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
+Fork this repo into your own namespace, *make it private*, and grant me access (_do not_ create a merge request, as previously requested, the diff will be publicly visible even if the repo isn't). I will verify the solution as it appears on the `master` branch.
 
 Your fork should contain a simple Dockerfile containing all the required build steps and an appropriate CMD instruction (see the example [Dockerfile](Dockerfile)).
 
-It must be possible to be called like this (see the [run-script](run-script.sh)):
+It must be possible to be called like this (see the [run-script](run-script.sh)), with the the `PRESENTS` value given as an env var to be used as input to your solution:
 
     docker build -t christmas_comp .
-    docker run --memory=1G christmas_comp
+    docker run --memory=1G -e PRESENTS christmas_comp
 
 (note the `1G` memory limit on the `run`)
 
@@ -58,7 +58,9 @@ To make it fair across languages with a slower startup time (JVM for example), y
     ...
     execution_time = getTime() - start_time
 
-The winning entry will be the fastest solution to deliver the correct answer.
+Alongside a check for the correct desk number in the output for `PRESENTS=50000000`, further test cases will be considered (with undisclosed `PRESENTS` values).
+
+The winning entry will be the fastest solution to deliver the correct answers to all inputs.
 
 # The prize
 
