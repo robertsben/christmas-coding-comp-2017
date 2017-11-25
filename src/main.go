@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
+	"os"
+	"strconv"
 )
 
 type DeskData struct {
@@ -43,7 +45,8 @@ func main() {
 	deskDataChannel := make(chan DeskData)
 	quitChannel := make(chan bool)
 
-	target = 50000000
+	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
+	target = uint32(parsedTarget)
 	currentMax = 0
 
 	start = time.Now()
