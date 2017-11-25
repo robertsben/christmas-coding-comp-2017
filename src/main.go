@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
+	"os"
+	"strconv"
 )
 
 func calculatePresents(desk uint32) uint32 {
@@ -23,7 +25,8 @@ func main() {
 	var start time.Time
 	var duration time.Duration
 
-	target = 50000000
+	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
+	target = uint32(parsedTarget)
 	currentMax = 0
 
 	start = time.Now()
