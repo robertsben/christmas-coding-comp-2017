@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
+	"os"
+	"strconv"
 )
 
 func calculatePresents(desk int) int {
@@ -21,10 +23,10 @@ func main() {
 	start := time.Now()
 	fmt.Printf("Hello, world\n")
 
-	target := 50000000
+	target, _ := strconv.Atoi(os.Getenv("PRESENTS"))
 	currentMax := 0
 	var desk int
-
+	fmt.Printf("%v\n", target)
 	for i := 1; currentMax < target; i++ {
 		presentsForDesk := calculatePresents(i)
 		fmt.Printf("%v: %v\n", i, presentsForDesk)
