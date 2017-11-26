@@ -13,40 +13,46 @@ type deskData struct {
 }
 
 type primeMultipleData struct {
-	multiple, sum uint32 // n^x, sum of n^x + n^x-1 + ... n^0 (* 10)
+	multiple, sum uint32 // p^x, sum of p^x + p^x-1 + ... p^0
 }
 
 type primeData struct {
-	prime uint32
+	// here we assume we only need primes up to 65535; i.e. we'll deal only with numbers <= 4294836225 (almost all unsigned 32 bit integers)
+	prime uint32 // p
 	multiples []primeMultipleData
 }
 
+var elfPresentMultiplier uint32 = 10
+
+/* The minimum number of presents to find */
 var limit uint32
 
-// here we assume we only need primes up to 65535; i.e. we'll deal only with numbers <= 4294836225 (almost all unsigned 32 bit integers)
+/* A list of primes, with exponent and sum data */
 var primes []primeData
 
+/* Generate the exponents and sums of them */
 func generateExponents(n uint32) []primeMultipleData {
 	var i, cumulativeExponent, nPower uint32
 	var primeExponentList []primeMultipleData
 	cumulativeExponent = 0
-	primeExponentList = append(primeExponentList, primeMultipleData{1, 10})
-	primeExponentList = append(primeExponentList, primeMultipleData{n, n * 10 + 10})
+	primeExponentList = append(primeExponentList, primeMultipleData{1, 1})
+	primeExponentList = append(primeExponentList, primeMultipleData{n, n + 1})
 
-	for i = 2; cumulativeExponent < limit; i++ {
+	for i = 2; cumulativeExponent <= limit; i++ {
 		nPower = uint32((primeExponentList)[i-1].multiple * n)
-		cumulativeExponent = uint32(primeExponentList[i-1].sum) + (nPower * 10)
+		cumulativeExponent = uint32(primeExponentList[i-1].sum) + nPower
 		primeExponentList = append(primeExponentList, primeMultipleData{nPower, cumulativeExponent})
 	}
 
 	return primeExponentList
 }
 
+/* Generate the list of primes using atkins sieve */
 func atkinSieve(max uint32) {
 	var x, y, n uint32
 	maxSqrt := math.Sqrt(float64(max))
 
-	isPrime := make([]bool, max, max)
+	isPrime := make([]bool, max+1, max+1)
 
 	for x = 1; float64(x) <= maxSqrt; x++ {
 		for y = 1; float64(y) <= maxSqrt; y++ {
@@ -86,10 +92,10 @@ func atkinSieve(max uint32) {
 
 func calculatePresents(desk uint32) uint32 {
 	var total, i uint32
-	total = 10 * desk
+	total = elfPresentMultiplier * desk
 	for i = desk-1; i > 0; i-- {
 		if desk % i == 0 {
-			total += i * 10
+			total += i * elfPresentMultiplier
 		}
 	}
 
@@ -109,9 +115,22 @@ func deskDelivery(deskDataChannel chan deskData, quitChannel chan bool) {
 	}
 }
 
+func calculatePresentsFromCache(desk uint32) uint32 {
+	var total, i, j, primeTotal uint32
+	total = 1
+	for i = 0; i < uint32(len(primes)); i++ {
+		primeTotal = 1
+		for j = 1; desk % primes[i].multiples[j].multiple == 0 && j < uint32(len(primes[i].multiples)); j++ {
+			primeTotal = primes[i].multiples[j].sum
+		}
+		total *= primeTotal
+	}
+	return total * elfPresentMultiplier
+}
+
 
 func main() {
-	var desk, target, primeTarget uint32
+	var desk, primeTarget, deskSearchStart, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
 	//var deskData deskData
@@ -119,9 +138,21 @@ func main() {
 	//quitChannel := make(chan bool)
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
-	target = uint32(parsedTarget)
-	limit = target
-	primeTarget = uint32(math.Sqrt(float64(target)))
+	limit = uint32(parsedTarget)
+	primeTarget = uint32(math.Sqrt(float64(limit)))
+
+	/* We know that the desk will be greater than the root of the present number (or the actual number for values
+	19 or below) so we set that as the start point for searching
+	 */
+	if primeTarget > 19 {
+		deskSearchStart = primeTarget
+	} else {
+		deskSearchStart = uint32(math.Sqrt(float64(limit/10)))
+	}
+
+	if deskSearchStart % 2 != 0 {
+		deskSearchStart--
+	}
 
 	start = time.Now()
 
@@ -149,11 +180,23 @@ func main() {
 	//	}
 	//}
 
+	/* initialise our prime cache */
 	atkinSieve(primeTarget)
+	//fmt.Printf("%v\n", primes)
+
+	step = 2
+
+	for desk = deskSearchStart; currentMax < limit; desk+=step {
+		presentsForDesk = calculatePresentsFromCache(desk)
+		if presentsForDesk > currentMax {
+			fmt.Printf("%v, %v\n", desk, presentsForDesk)
+			currentMax = presentsForDesk
+		}
+	}
+
+	desk -= step
 
 	duration = time.Since(start)
-
-	fmt.Printf("%v\n", primes)
 
 	fmt.Printf("%v\n", desk)
 	fmt.Printf("%v\n", duration)
