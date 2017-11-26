@@ -8,10 +8,6 @@ import (
 	"math"
 )
 
-type deskData struct {
-	desk, presents uint32
-}
-
 type primeMultipleData struct {
 	multiple, sum uint32 // p^x, sum of p^x + p^x-1 + ... p^0
 }
@@ -21,8 +17,6 @@ type primeData struct {
 	prime uint32 // p
 	multiples []primeMultipleData
 }
-
-var elfPresentMultiplier uint32 = 10
 
 /* The minimum number of presents to find */
 var limit uint32
@@ -39,7 +33,7 @@ func generateExponents(n uint32) []primeMultipleData {
 	primeExponentList = append(primeExponentList, primeMultipleData{n, n + 1})
 
 	for i = 2; cumulativeExponent <= limit; i++ {
-		nPower = uint32((primeExponentList)[i-1].multiple * n)
+		nPower = uint32(primeExponentList[i-1].multiple * n)
 		cumulativeExponent = uint32(primeExponentList[i-1].sum) + nPower
 		primeExponentList = append(primeExponentList, primeMultipleData{nPower, cumulativeExponent})
 	}
@@ -90,31 +84,6 @@ func atkinSieve(max uint32) {
 	}
 }
 
-func calculatePresents(desk uint32) uint32 {
-	var total, i uint32
-	total = elfPresentMultiplier * desk
-	for i = desk-1; i > 0; i-- {
-		if desk % i == 0 {
-			total += i * elfPresentMultiplier
-		}
-	}
-
-	return total
-}
-
-func deskDelivery(deskDataChannel chan deskData, quitChannel chan bool) {
-	deskData := deskData{0,0}
-	for {
-		select {
-		case deskDataChannel <- deskData:
-			deskData.desk += 12
-			deskData.presents = calculatePresents(deskData.desk)
-		case <-quitChannel:
-			return
-		}
-	}
-}
-
 func calculatePresentsFromCache(desk uint32) uint32 {
 	var total, i, j, primeTotal uint32
 	total = 1
@@ -125,7 +94,8 @@ func calculatePresentsFromCache(desk uint32) uint32 {
 		}
 		total *= primeTotal
 	}
-	return total * elfPresentMultiplier
+	// return total of exponent sums, times the elf present delivery multiplier
+	return total * 10
 }
 
 
@@ -133,16 +103,20 @@ func main() {
 	var desk, primeTarget, deskSearchStart, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
+	step = 2
 	//var deskData deskData
 	//deskDataChannel := make(chan deskData)
 	//quitChannel := make(chan bool)
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
+
+	start = time.Now()
 	limit = uint32(parsedTarget)
 	primeTarget = uint32(math.Sqrt(float64(limit)))
 
-	/* We know that the desk will be greater than the root of the present number (or the actual number for values
-	19 or below) so we set that as the start point for searching
+	/*
+		We know that the desk will be greater than the root of the present number (or the actual number for values
+		19 or below) so we set that as the start point for searching
 	 */
 	if primeTarget > 19 {
 		deskSearchStart = primeTarget
@@ -154,42 +128,13 @@ func main() {
 		deskSearchStart--
 	}
 
-	start = time.Now()
-
-	//go func() {
-	//	for deskData = range deskDataChannel {
-	//		if deskData.presents > currentMax {
-	//			fmt.Printf("%v: %v\n", deskData.desk, deskData.presents)
-	//			currentMax = deskData.presents
-	//			desk = deskData.desk
-	//		}
-	//		if deskData.presents > target {
-	//			quitChannel <- true
-	//		}
-	//	}
-	//}()
-	//
-	//deskDelivery(deskDataChannel, quitChannel)
-
-	//for i = 0; currentMax < target; i+=12 {
-	//	presentsForDesk = calculatePresents(i)
-	//	if presentsForDesk > currentMax {
-	//		fmt.Printf("%v: %v\n", i, presentsForDesk)
-	//		currentMax = presentsForDesk
-	//		desk = i
-	//	}
-	//}
-
 	/* initialise our prime cache */
 	atkinSieve(primeTarget)
-	//fmt.Printf("%v\n", primes)
-
-	step = 2
 
 	for desk = deskSearchStart; currentMax < limit; desk+=step {
 		presentsForDesk = calculatePresentsFromCache(desk)
 		if presentsForDesk > currentMax {
-			fmt.Printf("%v, %v\n", desk, presentsForDesk)
+			//fmt.Printf("%v, %v\n", desk, presentsForDesk)
 			currentMax = presentsForDesk
 		}
 	}
