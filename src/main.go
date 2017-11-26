@@ -8,14 +8,39 @@ import (
 	"math"
 )
 
-type DeskData struct {
+type deskData struct {
 	desk, presents uint32
+}
+
+type primeMultipleData struct {
+	multiple, sum uint32 // n^x, sum of n^x + n^x-1 + ... n^0 (* 10)
+}
+
+type primeData struct {
+	prime uint32
+	multiples []primeMultipleData
 }
 
 var limit uint32
 
 // here we assume we only need primes up to 65535; i.e. we'll deal only with numbers <= 4294836225 (almost all unsigned 32 bit integers)
-var primes []uint32
+var primes []primeData
+
+func generateExponents(n uint32) []primeMultipleData {
+	var i, cumulativeExponent, nPower uint32
+	var primeExponentList []primeMultipleData
+	cumulativeExponent = 0
+	primeExponentList = append(primeExponentList, primeMultipleData{1, 10})
+	primeExponentList = append(primeExponentList, primeMultipleData{n, n * 10 + 10})
+
+	for i = 2; cumulativeExponent < limit; i++ {
+		nPower = uint32((primeExponentList)[i-1].multiple * n)
+		cumulativeExponent = uint32(primeExponentList[i-1].sum) + (nPower * 10)
+		primeExponentList = append(primeExponentList, primeMultipleData{nPower, cumulativeExponent})
+	}
+
+	return primeExponentList
+}
 
 func atkinSieve(max uint32) {
 	var x, y, n uint32
@@ -53,7 +78,8 @@ func atkinSieve(max uint32) {
 
 	for x = 0; int(x) < len(isPrime)-1; x++ {
 		if isPrime[x] {
-			primes = append(primes, x)
+			multipleDataList := generateExponents(x)
+			primes = append(primes, primeData{x, multipleDataList})
 		}
 	}
 }
@@ -70,8 +96,8 @@ func calculatePresents(desk uint32) uint32 {
 	return total
 }
 
-func deskDelivery(deskDataChannel chan DeskData, quitChannel chan bool) {
-	deskData := DeskData{0,0}
+func deskDelivery(deskDataChannel chan deskData, quitChannel chan bool) {
+	deskData := deskData{0,0}
 	for {
 		select {
 		case deskDataChannel <- deskData:
@@ -88,12 +114,13 @@ func main() {
 	var desk, target, primeTarget uint32
 	var start time.Time
 	var duration time.Duration
-	//var deskData DeskData
-	//deskDataChannel := make(chan DeskData)
+	//var deskData deskData
+	//deskDataChannel := make(chan deskData)
 	//quitChannel := make(chan bool)
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
 	target = uint32(parsedTarget)
+	limit = target
 	primeTarget = uint32(math.Sqrt(float64(target)))
 
 	start = time.Now()
@@ -123,7 +150,6 @@ func main() {
 	//}
 
 	atkinSieve(primeTarget)
-
 
 	duration = time.Since(start)
 
