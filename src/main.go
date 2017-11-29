@@ -85,17 +85,39 @@ func atkinSieve(max uint32) {
 	}
 }
 
+func calculatePrimeTotalForDesk(desk uint32, data primeData, totalChannel chan uint32) {
+	var j uint16
+	var total uint32
+
+	for j = 1; j < uint16(len(data.multiples)) && desk % data.multiples[j].multiple == 0; j++ {
+		total = data.multiples[j].sum
+	}
+
+	if total != 0 {
+		totalChannel <- total
+	}
+}
+
 func calculatePresentsFromCache(desk uint32) uint32 {
 	var total, primeTotal uint32
-	var j uint16
+	//var j uint16
 	var prime primeData
 	total = 1
-	for _, prime = range primes {
-		primeTotal = 1
-		for j = 1; j < uint16(len(prime.multiples)) && desk % prime.multiples[j].multiple == 0; j++ {
-			primeTotal = prime.multiples[j].sum
+	primeTotalsChannel := make(chan uint32)
+
+	go func() {
+		for primeTotal = range primeTotalsChannel {
+			total *= primeTotal
 		}
-		total *= primeTotal
+	}()
+
+	for _, prime = range primes {
+		go calculatePrimeTotalForDesk(desk, prime, primeTotalsChannel)
+		//primeTotal = 1
+		//for j = 1; j < uint16(len(prime.multiples)) && desk % prime.multiples[j].multiple == 0; j++ {
+		//	primeTotal = prime.multiples[j].sum
+		//}
+		//total *= primeTotal
 	}
 	//for i = 0; i < uint32(len(primes)); i++ {
 	//}
