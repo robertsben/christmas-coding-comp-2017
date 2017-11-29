@@ -34,15 +34,16 @@ var memprofile = flag.String("memprofile", fmt.Sprintf("mem-%v.prof", time.Now()
 
 /* Generate the exponents and sums of them */
 func generateExponents(n uint32) []primeMultipleData {
-	var i, cumulativeExponent, nPower uint32
+	var i uint8
+	var cumulativeExponent, nPower uint32
 	var primeExponentList []primeMultipleData
 	cumulativeExponent = 0
 	primeExponentList = append(primeExponentList, primeMultipleData{1, 1})
 	primeExponentList = append(primeExponentList, primeMultipleData{n, n + 1})
 
-	for i = 2; cumulativeExponent <= limit; i++ {
-		nPower = uint32(primeExponentList[i-1].multiple * n)
-		cumulativeExponent = uint32(primeExponentList[i-1].sum) + nPower
+	for i = 2; uint64(cumulativeExponent) * uint64(n) <= uint64(limit); i++ {
+		nPower = primeExponentList[i-1].multiple * n
+		cumulativeExponent = primeExponentList[i-1].sum + nPower
 		primeExponentList = append(primeExponentList, primeMultipleData{nPower, cumulativeExponent})
 	}
 
@@ -93,15 +94,19 @@ func atkinSieve(max uint32) {
 }
 
 func calculatePresentsFromCache(desk uint32) uint32 {
-	var total, i, j, primeTotal uint32
+	var total, primeTotal uint32
+	var j uint16
+	var prime primeData
 	total = 1
-	for i = 0; i < uint32(len(primes)); i++ {
+	for _, prime = range primes {
 		primeTotal = 1
-		for j = 1; desk % primes[i].multiples[j].multiple == 0 && j < uint32(len(primes[i].multiples)); j++ {
-			primeTotal = primes[i].multiples[j].sum
+		for j = 1; j < uint16(len(prime.multiples)) && desk % prime.multiples[j].multiple == 0; j++ {
+			primeTotal = prime.multiples[j].sum
 		}
 		total *= primeTotal
 	}
+	//for i = 0; i < uint32(len(primes)); i++ {
+	//}
 	// return total of exponent sums, times the elf present delivery multiplier
 	return total * 10
 }
@@ -133,6 +138,7 @@ func main() {
 	start = time.Now()
 	limit = uint32(parsedTarget)
 	primeTarget = uint32(math.Sqrt(float64(limit)))
+	fmt.Printf("%v\n", limit)
 
 	/*
 		We know that the desk will be greater than the root of the present number (or the actual number for values
