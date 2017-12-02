@@ -93,7 +93,7 @@ func atkinSieve(max uint32) {
 	}
 }
 
-func calculatePrimeTotalForDesk(desk uint32, data primeData, totalChannel chan uint32) {
+func calculatePrimeTotalForDesk(desk uint32, data primeData, totalChannel chan<- uint32) {
 	var j uint16
 	var total uint32
 
