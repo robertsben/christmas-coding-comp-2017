@@ -135,17 +135,17 @@ func main() {
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
 
+	// start timing now we have all the information
 	start = time.Now()
 	limit = uint32(parsedTarget)
 	primeTarget = uint32(math.Sqrt(float64(limit)))
 	fmt.Printf("%v\n", limit)
 
 	/*
-		We know that the desk will be greater than the root of the present number (or the actual number for values
-		19 or below) so we set that as the start point for searching
+		Desk is always > limit/50 (as long as the result >= 2)
 	 */
  	if limit >= 100 {
-		deskSearchStart = (limit/10)/5
+		deskSearchStart = limit/50
 	} else {
 		step = 1
 		deskSearchStart = 1
@@ -158,16 +158,18 @@ func main() {
 	/* initialise our prime cache */
 	atkinSieve(primeTarget)
 
+	/* iterate along desks figuring out the number of presents they get */
 	for desk = deskSearchStart; currentMax < limit; desk+=step {
 		presentsForDesk = calculatePresentsFromCache(desk)
 		if presentsForDesk > currentMax {
-			//fmt.Printf("%v, %v\n", desk, presentsForDesk)
+			fmt.Printf("%v, %v\n", desk, presentsForDesk)
 			currentMax = presentsForDesk
 		}
 	}
 
 	desk -= step
 
+	// quit timing now we have the result
 	duration = time.Since(start)
 
 	fmt.Printf("%v\n", desk)
