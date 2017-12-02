@@ -102,7 +102,6 @@ func calculatePresentsFromCache(desk uint32) uint32 {
 	return total * 10
 }
 
-
 func main() {
 	var desk, primeTarget, currentMax, presentsForDesk, step uint32
 	var start time.Time
