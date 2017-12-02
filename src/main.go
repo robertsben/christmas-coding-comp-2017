@@ -6,7 +6,12 @@ import (
 	"os"
 	"strconv"
 	"math"
+	"flag"
+	"log"
+	"runtime/pprof"
+	"runtime"
 )
+
 
 type primeMultipleData struct {
 	multiple, sum uint32 // p^x, sum of p^x + p^x-1 + ... p^0
@@ -23,6 +28,9 @@ var limit uint32
 
 /* A list of primes, with exponent and sum data */
 var primes []primeData
+
+var cpuprofile = flag.String("cpuprofile", fmt.Sprintf("cpu-%v.prof", time.Now()), "write cpu profile `file`")
+var memprofile = flag.String("memprofile", fmt.Sprintf("mem-%v.prof", time.Now()), "write memory profile to `file`")
 
 /* Generate the exponents and sums of them */
 func generateExponents(n uint32) []primeMultipleData {
@@ -127,6 +135,18 @@ func calculatePresentsFromCache(desk uint32) uint32 {
 
 
 func main() {
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal("could not create CPU profile: ", err)
+		}
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.Fatal("could not start CPU profile: ", err)
+		}
+		defer pprof.StopCPUProfile()
+	}
+
 	var desk, primeTarget, deskSearchStart, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
@@ -173,4 +193,16 @@ func main() {
 
 	fmt.Printf("%v\n", desk)
 	fmt.Printf("%v\n", duration)
+
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal("could not create memory profile: ", err)
+		}
+		runtime.GC() // get up-to-date statistics
+		if err := pprof.WriteHeapProfile(f); err != nil {
+			log.Fatal("could not write memory profile: ", err)
+		}
+		f.Close()
+	}
 }
