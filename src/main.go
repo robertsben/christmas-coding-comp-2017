@@ -144,13 +144,14 @@ func main() {
 		We know that the desk will be greater than the root of the present number (or the actual number for values
 		19 or below) so we set that as the start point for searching
 	 */
-	if primeTarget > 19 {
-		deskSearchStart = primeTarget
+ 	if limit >= 100 {
+		deskSearchStart = (limit/10)/5
 	} else {
-		deskSearchStart = uint32(math.Sqrt(float64(limit/10)))
+		step = 1
+		deskSearchStart = 1
 	}
 
-	if deskSearchStart % 2 != 0 {
+	if deskSearchStart > 1 && deskSearchStart % 2 != 0 {
 		deskSearchStart--
 	}
 
