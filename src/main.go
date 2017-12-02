@@ -6,10 +6,6 @@ import (
 	"os"
 	"strconv"
 	"math"
-	"flag"
-	"log"
-	"runtime/pprof"
-	"runtime"
 )
 
 
@@ -28,9 +24,6 @@ var limit uint32
 
 /* A list of primes, with exponent and sum data */
 var primes []primeData
-
-var cpuprofile = flag.String("cpuprofile", fmt.Sprintf("cpu-%v.prof", time.Now()), "write cpu profile `file`")
-var memprofile = flag.String("memprofile", fmt.Sprintf("mem-%v.prof", time.Now()), "write memory profile to `file`")
 
 /* Generate the exponents and sums of them */
 func generateExponents(n uint32) []primeMultipleData {
@@ -105,33 +98,17 @@ func calculatePresentsFromCache(desk uint32) uint32 {
 		}
 		total *= primeTotal
 	}
-	//for i = 0; i < uint32(len(primes)); i++ {
-	//}
 	// return total of exponent sums, times the elf present delivery multiplier
 	return total * 10
 }
 
 
 func main() {
-	flag.Parse()
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
-		if err != nil {
-			log.Fatal("could not create CPU profile: ", err)
-		}
-		if err := pprof.StartCPUProfile(f); err != nil {
-			log.Fatal("could not start CPU profile: ", err)
-		}
-		defer pprof.StopCPUProfile()
-	}
-
-	var desk, primeTarget, deskSearchStart, currentMax, presentsForDesk, step uint32
+	var desk, primeTarget, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
-	step = 2
-	//var deskData deskData
-	//deskDataChannel := make(chan deskData)
-	//quitChannel := make(chan bool)
+	step = 1
+	desk = 1
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
 
@@ -139,30 +116,23 @@ func main() {
 	start = time.Now()
 	limit = uint32(parsedTarget)
 	primeTarget = uint32(math.Sqrt(float64(limit)))
-	fmt.Printf("%v\n", limit)
 
-	/*
-		Desk is always > limit/50 (as long as the result >= 2)
-	 */
+	/* Desk is always > limit/50 (as long as the result >= 2) */
  	if limit >= 100 {
-		deskSearchStart = limit/50
-	} else {
-		step = 1
-		deskSearchStart = 1
-	}
-
-	if deskSearchStart > 1 && deskSearchStart % 2 != 0 {
-		deskSearchStart--
+		desk = limit/50
+		step = 2
+		if desk > 2 && desk % 2 != 0 {
+			desk--
+		}
 	}
 
 	/* initialise our prime cache */
 	atkinSieve(primeTarget)
 
 	/* iterate along desks figuring out the number of presents they get */
-	for desk = deskSearchStart; currentMax < limit; desk+=step {
+	for ; currentMax < limit; desk+=step {
 		presentsForDesk = calculatePresentsFromCache(desk)
 		if presentsForDesk > currentMax {
-			fmt.Printf("%v, %v\n", desk, presentsForDesk)
 			currentMax = presentsForDesk
 		}
 	}
@@ -174,16 +144,4 @@ func main() {
 
 	fmt.Printf("%v\n", desk)
 	fmt.Printf("%v\n", duration)
-
-	if *memprofile != "" {
-		f, err := os.Create(*memprofile)
-		if err != nil {
-			log.Fatal("could not create memory profile: ", err)
-		}
-		runtime.GC() // get up-to-date statistics
-		if err := pprof.WriteHeapProfile(f); err != nil {
-			log.Fatal("could not write memory profile: ", err)
-		}
-		f.Close()
-	}
 }
