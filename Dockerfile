@@ -1,12 +1,11 @@
-# Example Dockerfile, edit to your requirements
 FROM golang:1-alpine
 
-WORKDIR /go/src/app
+RUN mkdir /app
 
-COPY src .
+WORKDIR /app
 
-RUN go-wrapper download
+ADD src/ .
 
-RUN go-wrapper install
+RUN go build -o main .
 
-CMD ["go-wrapper", "run"]
+CMD ["./main"]
