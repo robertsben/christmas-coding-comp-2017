@@ -17,6 +17,10 @@ type primeMultipleData struct {
 	multiple, sum uint32 // p^x, sum of p^x + p^x-1 + ... p^0
 }
 
+type chunkLimits struct {
+	start, end uint8
+}
+
 type primeData struct {
 	// here we assume we only need primes up to 65535; i.e. we'll deal only with numbers <= 4294836225 (almost all unsigned 32 bit integers)
 	prime uint32 // p
@@ -28,6 +32,9 @@ var limit uint32
 
 /* A list of primes, with exponent and sum data */
 var primes []primeData
+
+/* The indexes of the chunks we want to split primes into */
+var primeChunks []chunkLimits
 
 var cpuprofile = flag.String("cpuprofile", fmt.Sprintf("cpu-%v.prof", time.Now()), "write cpu profile `file`")
 var memprofile = flag.String("memprofile", fmt.Sprintf("mem-%v.prof", time.Now()), "write memory profile to `file`")
@@ -93,25 +100,40 @@ func atkinSieve(max uint32) {
 	}
 }
 
-func calculatePrimeTotalForDesk(desk uint32, data primeData, totalChannel chan uint32) {
+func calculatePrimeTotalForDesk(desk uint32, data primeData, totalChannel chan<- uint32) {
 	var j uint16
 	var total uint32
-
+	total = 1
 	for j = 1; j < uint16(len(data.multiples)) && desk % data.multiples[j].multiple == 0; j++ {
 		total = data.multiples[j].sum
 	}
 
-	if total != 0 {
-		totalChannel <- total
-	}
+	totalChannel <- total
 }
 
 func calculatePresentsFromCache(desk uint32) uint32 {
 	var total, primeTotal uint32
-	//var j uint16
+	var j uint16
 	var prime primeData
 	total = 1
 	primeTotalsChannel := make(chan uint32)
+
+
+
+	//
+	//nCPU := runtime.NumCPU()
+	//runtime.GOMAXPROCS(nCPU)
+	//
+	//primeChannels := make([]chan uint32, nCPU)
+	//
+	//for i := range primeChannels {
+	//	c := make(chan uint32)
+	//	go calculatePrimeTotalForDesk(desk, )
+	//}
+	//
+
+
+	//fmt.Printf("CPUS: %v\n", nCPU)
 
 	go func() {
 		for primeTotal = range primeTotalsChannel {
@@ -120,12 +142,12 @@ func calculatePresentsFromCache(desk uint32) uint32 {
 	}()
 
 	for _, prime = range primes {
-		go calculatePrimeTotalForDesk(desk, prime, primeTotalsChannel)
-		//primeTotal = 1
-		//for j = 1; j < uint16(len(prime.multiples)) && desk % prime.multiples[j].multiple == 0; j++ {
-		//	primeTotal = prime.multiples[j].sum
-		//}
-		//total *= primeTotal
+		//go calculatePrimeTotalForDesk(desk, prime, primeTotalsChannel)
+		primeTotal = 1
+		for j = 1; j < uint16(len(prime.multiples)) && desk % prime.multiples[j].multiple == 0; j++ {
+			primeTotal = prime.multiples[j].sum
+		}
+		total *= primeTotal
 	}
 	//for i = 0; i < uint32(len(primes)); i++ {
 	//}
@@ -150,12 +172,15 @@ func main() {
 	var desk, primeTarget, deskSearchStart, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
+	var nCPU, chunkSize, numPrimes, chunkIter, chunkEnd uint8
+	//var limits []uint32
 	step = 2
 	//var deskData deskData
 	//deskDataChannel := make(chan deskData)
 	//quitChannel := make(chan bool)
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
+	nCPU = uint8(runtime.NumCPU())
 
 	start = time.Now()
 	limit = uint32(parsedTarget)
@@ -178,6 +203,17 @@ func main() {
 
 	/* initialise our prime cache */
 	atkinSieve(primeTarget)
+
+	numPrimes = uint8(len(primes))
+	chunkSize = (numPrimes + nCPU - 1) / nCPU
+
+	for chunkIter = 0; chunkIter < numPrimes; chunkIter+=chunkSize {
+		chunkEnd = chunkIter + chunkSize
+		if chunkEnd > numPrimes {
+			chunkEnd = numPrimes
+		}
+		primeChunks = append(primeChunks, chunkLimits{start: chunkIter, end: chunkEnd})
+	}
 
 	for desk = deskSearchStart; currentMax < limit; desk+=step {
 		presentsForDesk = calculatePresentsFromCache(desk)
