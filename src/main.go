@@ -19,7 +19,7 @@ func main() {
 	// start timing now we have all the information
 	start = time.Now()
 	limit = uint32(parsedTarget)
-	
+
 	divisor = 10
 
 	if limit >= 390 && limit < 20160 {
@@ -41,10 +41,6 @@ func main() {
 		if cache[desk] * 10 > limit {
 			break
 		}
-		//if cache[i] > currentMax {
-		//	currentMax = cache[i]
-		//	fmt.Printf("%v: %v, %v\n", i, cache[i], math.Floor(float64(cache[i])/float64(i)))
-		//}
 	}
 
 	// quit timing now we have the result
