@@ -39,7 +39,7 @@ func main() {
 			cache[elf] += desk
 		}
 		// bail as soon as we find the desk with more than PRESENTS
-		if cache[desk] * 10 > limit {
+		if cache[desk] * 10 >= limit {
 			break
 		}
 	}
