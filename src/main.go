@@ -5,9 +5,22 @@ import (
 	"time"
 	"os"
 	"strconv"
+	"log"
+	"runtime/pprof"
+	"runtime"
 )
 
 func main() {
+	cpuprofile := fmt.Sprintf("cpu-%v.prof", time.Now())
+	f, err := os.Create(cpuprofile)
+	if err != nil {
+		log.Fatal("could not create CPU profile: ", err)
+	}
+	if err := pprof.StartCPUProfile(f); err != nil {
+		log.Fatal("could not start CPU profile: ", err)
+	}
+	defer pprof.StopCPUProfile()
+
 	var desk, elf, searchLimit, limit uint32
 	var start time.Time
 	var duration time.Duration
@@ -39,7 +52,7 @@ func main() {
 			cache[elf] += desk
 		}
 		// bail as soon as we find the desk with more than PRESENTS
-		if cache[desk] * 10 > limit {
+		if cache[desk] * 10 >= limit {
 			break
 		}
 	}
@@ -49,4 +62,15 @@ func main() {
 
 	fmt.Printf("%v\n", desk)
 	fmt.Printf("%v\n", duration)
+
+	memprofile := fmt.Sprintf("mem-%v.prof", time.Now())
+	f, err = os.Create(memprofile)
+	if err != nil {
+		log.Fatal("could not create memory profile: ", err)
+	}
+	runtime.GC() // get up-to-date statistics
+	if err := pprof.WriteHeapProfile(f); err != nil {
+		log.Fatal("could not write memory profile: ", err)
+	}
+	f.Close()
 }
