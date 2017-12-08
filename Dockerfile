@@ -1,11 +1,6 @@
-FROM golang:1-alpine
+FROM gcc
 
-RUN mkdir /app
-
-WORKDIR /app
-
-ADD src/ .
-
-RUN go build -o main .
-
+COPY ./src /usr/src
+WORKDIR /usr/src
+RUN gcc -o main -Ofast main.c
 CMD ["./main"]
