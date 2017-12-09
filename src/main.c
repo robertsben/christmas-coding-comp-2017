@@ -20,7 +20,7 @@ unsigned int main() {
         search_limit = presents/10;
     }
 
-    cache = (int*) calloc(search_limit+1, sizeof(int));
+    cache = (unsigned int*) calloc(search_limit+1, sizeof(unsigned int));
     if (cache == NULL) {
         printf("Got messed up trying to allocate memory, bailing :'( ");
         exit(0);
