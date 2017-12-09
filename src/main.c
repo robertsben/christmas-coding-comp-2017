@@ -5,8 +5,8 @@
 
 unsigned int main()
 {
-    unsigned static int search_limit, desk, elf, *cache, cpu_time_used;
-    static clock_t start;
+    unsigned int search_limit, desk, elf, *cache, cpu_time_used;
+    clock_t start;
     const unsigned int presents = atoi(getenv("PRESENTS"));
 
     start = clock();
