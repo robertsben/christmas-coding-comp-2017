@@ -1,5 +1,5 @@
 FROM gcc
-COPY ./src /usr/src
 WORKDIR /usr/src
+COPY ./src/main.c .
 RUN gcc -o main -Ofast main.c
 CMD ["./main"]
