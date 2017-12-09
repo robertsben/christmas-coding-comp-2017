@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 unsigned int main() {
     unsigned int search_limit, desk, elf, *cache, cpu_time_used;
     clock_t start;
