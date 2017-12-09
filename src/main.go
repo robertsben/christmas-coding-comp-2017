@@ -12,19 +12,19 @@ func main() {
 	var start time.Time
 	var duration time.Duration
 
-	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
+	parsedTarget, _ := strconv.ParseUint(os.Getenv("PRESENTS"), 10, 32)
 	limit = uint32(parsedTarget)
 
 	// start timing now we have all the information
 	start = time.Now()
 
 	// figure out how small we can make our search range, based on patterns observed from spitting out results
-	if limit >= 390 && limit < 20160 {
+	if limit > 6770400 {
+        searchLimit = limit/40
+    } else if limit >= 390 && limit < 20160 {
 		searchLimit = limit/20
 	} else if limit >= 20160 && limit <= 6770400 {
 		searchLimit = limit/30
-	} else if limit > 6770400 {
-		searchLimit = limit/40
 	} else {
 		searchLimit = limit/10
 	}
