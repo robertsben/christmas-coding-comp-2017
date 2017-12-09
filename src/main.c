@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-int search_limit, desk, elf, *cache;
-clock_t start;
-int cpu_time_used;
 
-int main()
+unsigned int main()
 {
-    const int presents = atoi(getenv("PRESENTS"));
+    unsigned static int search_limit, desk, elf, *cache, cpu_time_used;
+    static clock_t start;
+    const unsigned int presents = atoi(getenv("PRESENTS"));
 
     start = clock();
 
