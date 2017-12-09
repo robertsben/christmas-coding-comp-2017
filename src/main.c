@@ -3,8 +3,8 @@
 #include <time.h>
 
 int search_limit, desk, elf, *cache;
-clock_t start, end;
-double cpu_time_used;
+clock_t start;
+int cpu_time_used;
 
 int main()
 {
@@ -22,7 +22,7 @@ int main()
         search_limit = presents/10;
     }
 
-    cache = (int*) calloc((search_limit+1), sizeof(int));
+    cache = (int*) calloc(search_limit+1, sizeof(int));
     if (cache == NULL) {
         printf("Got messed up trying to allocate memory, bailing :'( ");
         exit(0);
@@ -37,11 +37,10 @@ int main()
         }
     }
 
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    cpu_time_used = (clock() - start);
 
     printf("%d\n", desk);
-    printf("%fs\n", cpu_time_used);
+    printf("%dµs\n", cpu_time_used);
     free(cache);
     return 0;
 }
