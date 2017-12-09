@@ -12,12 +12,12 @@ int main()
 
     start = clock();
 
-    if (presents >= 390 && presents < 20160) {
-        search_limit = presents/20;
-    } else if (presents >= 20160 && presents <= 6770400) {
-        search_limit = presents/30;
-    } else if (presents > 6770400) {
+    if (presents > 6770400) {
         search_limit = presents/40;
+    } else if (presents >= 20160 && presents <= 6770400) {
+        search_limit = presents / 30;
+    } else if (presents >= 390 && presents < 20160) {
+        search_limit = presents/20;
     } else {
         search_limit = presents/10;
     }
