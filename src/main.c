@@ -3,8 +3,7 @@
 #include <time.h>
 
 
-unsigned int main()
-{
+unsigned int main() {
     unsigned int search_limit, desk, elf, *cache, cpu_time_used;
     clock_t start;
     const unsigned int presents = atoi(getenv("PRESENTS"));
@@ -14,7 +13,7 @@ unsigned int main()
     if (presents > 6770400) {
         search_limit = presents/40;
     } else if (presents >= 20160 && presents <= 6770400) {
-        search_limit = presents / 30;
+        search_limit = presents/30;
     } else if (presents >= 390 && presents < 20160) {
         search_limit = presents/20;
     } else {
