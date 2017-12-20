@@ -119,10 +119,27 @@ func main() {
 	/* Desk is always > limit/50 (as long as the result >= 2) */
  	if limit >= 100 {
 		desk = limit/50
+	} else {
+		step = 1
+		desk = 1
+	}
+
+	if limit >= 2257920 {
+		step = 120
+	} else if limit >= 9920 {
+		step = 60
+	} else if limit >= 1872 {
+		step = 12
+	} else if limit >= 42 {
+		step = 6
+	} else if limit >= 4 {
 		step = 2
-		if desk > 2 && desk % 2 != 0 {
-			desk--
-		}
+	} else {
+		step = 1
+	}
+
+	if desk > 1 && desk % step != 0 {
+		desk = desk - (desk%step)
 	}
 
 	/* initialise our prime cache */
