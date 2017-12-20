@@ -151,8 +151,24 @@ func main() {
 		deskSearchStart = 1
 	}
 
-	if deskSearchStart > 1 && deskSearchStart % 2 != 0 {
-		deskSearchStart--
+	if limit >= 2257920 {
+		step = 120
+	} else if limit >= 9920 {
+		step = 60
+	} else if limit >= 1872 {
+		step = 12
+	} else if limit >= 42 {
+		step = 6
+	} else if limit >= 4 {
+		step = 2
+	} else {
+		step = 1
+	}
+
+	//step = 2
+
+	if deskSearchStart > 1 && deskSearchStart % step != 0 {
+		deskSearchStart = deskSearchStart - (deskSearchStart%step)
 	}
 
 	/* initialise our prime cache */
