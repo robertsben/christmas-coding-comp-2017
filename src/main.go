@@ -106,8 +106,6 @@ func main() {
 	var desk, primeTarget, currentMax, presentsForDesk, step uint32
 	var start time.Time
 	var duration time.Duration
-	step = 1
-	desk = 1
 
 	parsedTarget, _ := strconv.ParseInt(os.Getenv("PRESENTS"), 10, 64)
 
@@ -120,7 +118,6 @@ func main() {
  	if limit >= 100 {
 		desk = limit/50
 	} else {
-		step = 1
 		desk = 1
 	}
 
